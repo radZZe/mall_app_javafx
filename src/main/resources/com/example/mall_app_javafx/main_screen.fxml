@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.mall_app_javafx.MainScreenController">
+   <children>
+      <TabPane prefHeight="600.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Продажи">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="saleTable" prefHeight="320.0" prefWidth="800.0">
+                          <columns>
+                            <TableColumn fx:id="saleSaleIDColumn" prefWidth="75.0" text="saleID" />
+                            <TableColumn fx:id="saleArticleColumn" prefWidth="75.0" text="article" />
+                              <TableColumn fx:id="saleDateColumn" prefWidth="75.0" text="date" />
+                              <TableColumn fx:id="saleAmountColumn" prefWidth="75.0" text="amount" />
+                              <TableColumn fx:id="saleDepartmentCodeColumn" prefWidth="135.0" text="departmentCode" />
+                              <TableColumn fx:id="saleSumColumn" prefWidth="93.0" text="sum" />
+                          </columns>
+                        </TableView>
+                        <TextField fx:id="saleIDTF" layoutX="33.0" layoutY="346.0" prefHeight="26.0" prefWidth="75.0" promptText="saleID" />
+                        <TextField fx:id="articleTF" layoutX="127.0" layoutY="346.0" prefHeight="26.0" prefWidth="86.0" promptText="article" />
+                        <TextField fx:id="dateTF" layoutX="230.0" layoutY="346.0" prefHeight="26.0" prefWidth="116.0" promptText="date YYYY-MM-DD" />
+                        <TextField fx:id="amountTF" layoutX="357.0" layoutY="347.0" promptText="amount" />
+                        <TextField fx:id="departmentCodeTF" layoutX="515.0" layoutY="347.0" promptText="departmentCode" />
+                        <Button fx:id="saleUpdateBtn" layoutX="33.0" layoutY="396.0" mnemonicParsing="false" text="Изменить">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="saleAddBtn" layoutX="151.0" layoutY="396.0" mnemonicParsing="false" text="Добавить">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="saleDeleteBtn" layoutX="265.0" layoutY="396.0" mnemonicParsing="false" text="Удалить">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="38.0" layoutY="442.0" prefHeight="26.0" prefWidth="544.0" text="Для того чтобы добавить продажу, заполните все поля кроме saleID">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="38.0" layoutY="476.0" prefHeight="26.0" prefWidth="576.0" text="Для того чтобы изменить продажу, заполните saleID и изменяемое поле">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="38.0" layoutY="510.0" prefHeight="26.0" prefWidth="650.0" text="Для того чтобы удалить продажу, заполните saleID ">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Товары">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="productTable" prefHeight="337.0" prefWidth="800.0">
+                          <columns>
+                            <TableColumn fx:id="productArticleColumn" prefWidth="75.0" text="article" />
+                            <TableColumn fx:id="productNameColumn" prefWidth="75.0" text="name" />
+                              <TableColumn fx:id="productUnitIDColumn" prefWidth="75.0" text="unitID" />
+                              <TableColumn fx:id="productPriceColumn" prefWidth="75.0" text="price" />
+                          </columns>
+                        </TableView>
+                        <TextField fx:id="productArticleTF" layoutX="14.0" layoutY="353.0" prefHeight="25.0" prefWidth="84.0" promptText="article" />
+                        <TextField fx:id="productNameTF" layoutX="118.0" layoutY="353.0" promptText="name" />
+                        <TextField fx:id="productUnitIDTF" layoutX="286.0" layoutY="353.0" prefHeight="25.0" prefWidth="77.0" promptText="unitUD" />
+                        <TextField fx:id="productPriceTF" layoutX="384.0" layoutY="353.0" prefHeight="25.0" prefWidth="78.0" promptText="price" />
+                        <Button fx:id="productAddBtn" layoutX="14.0" layoutY="398.0" mnemonicParsing="false" text="Добавить">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="productUpdateBtn" layoutX="120.0" layoutY="399.0" mnemonicParsing="false" text="Изменить">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="productDeleteBtn" layoutX="231.0" layoutY="399.0" mnemonicParsing="false" text="Удалить">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="14.0" layoutY="444.0" prefHeight="26.0" prefWidth="544.0" text="Для того чтобы добавить товар, заполните все поля кроме article">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="14.0" layoutY="478.0" prefHeight="26.0" prefWidth="576.0" text="Для того чтобы изменить товар, заполните saleID и изменяемые поля">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="14.0" layoutY="512.0" prefHeight="26.0" prefWidth="650.0" text="Для того чтобы удалить товар, заполните article">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Label>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+            <Tab fx:id="reportTab" text="Отчет">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Label layoutX="290.0" layoutY="14.0" text="Выручка от продажи товаров">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="325.0" layoutY="35.0" text="за 01 месяц 2024 года">
+                           <font>
+                              <Font name="System Bold Italic" size="14.0" />
+                           </font>
+                        </Label>
+                        <TableView fx:id="reportTable" layoutY="54.0" prefHeight="517.0" prefWidth="800.0">
+                           <columns>
+                              <TableColumn fx:id="reportNameColumn" prefWidth="278.39996337890625" text="Наименование товара" />
+                              <TableColumn fx:id="reportUnitColumn" prefWidth="130.4000244140625" text="Единица измерения" />
+                              <TableColumn fx:id="reportPriceColumn" prefWidth="160.0" text="Цена розничная тыс. руб." />
+                              <TableColumn fx:id="reportAmountColumn" prefWidth="118.0" text="Количество товара" />
+                              <TableColumn fx:id="reportSumColumn" prefWidth="114.0" text="Выручка тыс. руб." />
+                           </columns>
+                        </TableView>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Контакты заведющего отделом">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Label fx:id="contactNameLabel" layoutX="156.0" layoutY="142.0" prefHeight="52.0" prefWidth="487.0" text="ФИО: Раздобаров Данила Андреевич">
+                           <font>
+                              <Font size="26.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="contactPhoneLabel" layoutX="174.0" layoutY="216.0" prefHeight="29.0" prefWidth="452.0" text="Номер телефона: ">
+                           <font>
+                              <Font size="26.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

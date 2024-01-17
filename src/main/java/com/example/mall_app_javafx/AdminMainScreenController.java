@@ -937,9 +937,6 @@ public class AdminMainScreenController {
             }else if (!isEnglishTextWithDigits(userLoginTF.getText())){
                 showAlert("Error","Не удалось добавить данные","некорректный login");
                 return;
-            }else if(!usersList.contains(userLoginTF.getText())){
-                showAlert("Error","Не удалось добавить данные","такого login не существует");
-                return;
             }else{
                 login = userLoginTF.getText();
             }

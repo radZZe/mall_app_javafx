@@ -3,11 +3,11 @@ package com.example.mall_app_javafx;
 import com.example.mall_app_javafx.models.*;
 
 import java.sql.*;
+import java.util.concurrent.CompletableFuture;
 
 
 public class DatabaseHandler extends Configs {
     Connection dbConnection;
-
     public Connection getDbConnection() throws ClassNotFoundException, SQLException {
         String connectionString = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName;
         Class.forName("com.mysql.cj.jdbc.Driver");
@@ -33,8 +33,11 @@ public class DatabaseHandler extends Configs {
 
         return resSet;
     }
+    public CompletableFuture<ResultSet> getUsersAsync() {
+        return CompletableFuture.supplyAsync(this::getUsers);
+    }
 
-    public ResultSet getUsers() {
+    private ResultSet getUsers() {
         ResultSet resSet = null;
         String select = "SELECT * FROM " + Const.USERS_TABLE;
         try {
@@ -46,6 +49,12 @@ public class DatabaseHandler extends Configs {
             e.printStackTrace();
         }
         return resSet;
+    }
+
+    public CompletableFuture<ResultSet> getDepartmentsAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            return getDepartments();
+        });
     }
 
     public ResultSet getDepartments() {
@@ -62,6 +71,18 @@ public class DatabaseHandler extends Configs {
         return resSet;
     }
 
+    public CompletableFuture<ResultSet> getSalesByDepartmentIdAsync(int id) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return getSalesByDepartmentId(id);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
     public ResultSet getSalesByDepartmentId(int id) throws SQLException, ClassNotFoundException {
         ResultSet resSet = null;
         String select = "SELECT * FROM " + Const.SALE_TABLE + " WHERE " + Const.DEPARTMENT_CODE + " =?";
@@ -69,6 +90,18 @@ public class DatabaseHandler extends Configs {
         prSt.setInt(1, id);
         resSet = prSt.executeQuery();
         return resSet;
+    }
+
+    public CompletableFuture<ResultSet> getSalesAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return getSales();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public ResultSet getSales() throws SQLException, ClassNotFoundException {
@@ -79,12 +112,36 @@ public class DatabaseHandler extends Configs {
         return resSet;
     }
 
+    public CompletableFuture<ResultSet> getProductsAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return getProducts();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
     public ResultSet getProducts() throws SQLException, ClassNotFoundException {
         ResultSet resSet = null;
         String select = "SELECT * FROM " + Const.PRODUCT_TABLE;
         PreparedStatement prSt = getDbConnection().prepareStatement(select);
         resSet = prSt.executeQuery();
         return resSet;
+    }
+
+    public CompletableFuture<ResultSet> getUnitsAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return getUnits();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public ResultSet getUnits() throws SQLException, ClassNotFoundException {
@@ -95,6 +152,17 @@ public class DatabaseHandler extends Configs {
         return resSet;
     }
 
+    public CompletableFuture<Integer> updateSaleAsync(Sale sale) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return updateSale(sale);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
     public int updateSale(Sale sale) throws SQLException, ClassNotFoundException {
         int resSet;
         String update = "UPDATE " + Const.SALE_TABLE + " SET "
@@ -113,7 +181,11 @@ public class DatabaseHandler extends Configs {
         resSet = prSt.executeUpdate();
         return resSet;
     }
-
+    public CompletableFuture<Void> addSaleAsync(Sale sale) {
+        return CompletableFuture.runAsync(() -> {
+            addSaleAsync(sale);
+        });
+    }
     public void addSale(Sale sale) throws SQLException, ClassNotFoundException {
         String insert = "INSERT INTO " + Const.SALE_TABLE + " (article, date, amount,departmentCode)" +
                 "VALUES (?, ?, ?, ? );";
@@ -124,7 +196,17 @@ public class DatabaseHandler extends Configs {
         prSt.setInt(4, sale.getDepartmentCode());
         prSt.executeUpdate();
     }
-
+    public void deleteSaleAsync(Integer id) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                deleteSale(id);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
     public void deleteSale(Integer id) throws SQLException, ClassNotFoundException {
         String delete = "DELETE FROM " + Const.SALE_TABLE + " WHERE " + Const.SALE_SALE_ID + " =?;";
         PreparedStatement prSt = getDbConnection().prepareStatement(delete);
@@ -190,6 +272,17 @@ public class DatabaseHandler extends Configs {
         prSt.executeUpdate();
     }
 
+    public CompletableFuture<ResultSet> getManagersAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return getManagers();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
     public ResultSet getManagers() throws SQLException, ClassNotFoundException {
         ResultSet resSet = null;
         String select = "SELECT * FROM " + Const.MANAGER_TABLE;
@@ -280,6 +373,17 @@ public class DatabaseHandler extends Configs {
         prSt.executeUpdate();
     }
 
+    public CompletableFuture<ResultSet> getManagersByDepartmentCodeAsync(int code) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return getManagerByDepartmentCode(code);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
     public ResultSet getManagerByDepartmentCode(Integer departmentCode) throws SQLException, ClassNotFoundException {
         ResultSet resSet = null;
         String select = "SELECT m.* FROM manager m INNER JOIN department d ON m.managerID = d.managerID WHERE d.departmentCode =?";
@@ -289,6 +393,17 @@ public class DatabaseHandler extends Configs {
         return resSet;
     }
 
+    public CompletableFuture<ResultSet> getDepartmentCodesAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return getDepartmentCodes();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
     public ResultSet getDepartmentCodes() throws SQLException, ClassNotFoundException {
         ResultSet resSet = null;
         String select = "SELECT departmentCode " + " FROM department;";
@@ -297,6 +412,17 @@ public class DatabaseHandler extends Configs {
         return resSet;
     }
 
+    public CompletableFuture<ResultSet> getDepartmentNameByCodeAsync(Integer code) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return getDepartmentNameByCode(code);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
     public ResultSet getDepartmentNameByCode(Integer departmentCode) throws SQLException, ClassNotFoundException {
         ResultSet resSet = null;
         String select = "SELECT name " + " FROM department WHERE departmentCode =?;";
@@ -342,6 +468,17 @@ public class DatabaseHandler extends Configs {
         return resSet;
     }
 
+    public CompletableFuture<ResultSet> getArticlesAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return getArticles();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
     public ResultSet getArticles() throws SQLException, ClassNotFoundException {
         ResultSet resSet = null;
         String select = "SELECT article" + " FROM product ;";
@@ -350,6 +487,17 @@ public class DatabaseHandler extends Configs {
         return resSet;
     }
 
+    public CompletableFuture<ResultSet> getSalesForDepartmentCodeAndDateAsync(Integer departmentCode, String date) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return getSalesForDepartmentCodeAndDate(departmentCode, date);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
     public ResultSet getSalesForDepartmentCodeAndDate(Integer departmentCode, String date) throws SQLException, ClassNotFoundException {
         ResultSet resSet = null;
         String select = "SELECT *" + " FROM sale " + "WHERE departmentCode =? AND date LIKE '" + date + "%';";

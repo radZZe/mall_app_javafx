@@ -256,31 +256,97 @@ public class AdminMainScreenController {
         ArrayList<Integer> unitList = new ArrayList<Integer>();
         ArrayList<Integer> managerList = new ArrayList<Integer>();
         ArrayList<String> usersList = new ArrayList<String>();
-        ResultSet saleListReponse = dbHandler.getSales();
-        ResultSet departmentCodeListReponse = dbHandler.getDepartmentCodes();
-        ResultSet articleListResponse = dbHandler.getArticles();
-        ResultSet unitListResponse = dbHandler.getUnits();
-        ResultSet managerListResponse = dbHandler.getManagers();
-        ResultSet usersListResponse = dbHandler.getUsers();
-        while(saleListReponse.next()){
-            saleList.add(saleListReponse.getInt(Const.SALE_SALE_ID));
-        }
-        while(articleListResponse.next()){
-            articleList.add(articleListResponse.getInt(Const.ARTICLE));
-        }
-        while(departmentCodeListReponse.next()){
-            departmentCodeList.add(departmentCodeListReponse.getInt(Const.DEPARTMENT_CODE));
-        }
-        while(unitListResponse.next()){
-            unitList.add(unitListResponse.getInt(Const.UNIT_ID));
-        }
+//        ResultSet saleListReponse = dbHandler.getSales();
+//        ResultSet departmentCodeListReponse = dbHandler.getDepartmentCodes();
+//        ResultSet articleListResponse = dbHandler.getArticles();
+//        ResultSet unitListResponse = dbHandler.getUnits();
+//        ResultSet managerListResponse = dbHandler.getManagers();
+//        ResultSet usersListResponse = dbHandler.getUsers();
+        dbHandler.getSalesAsync().thenAccept(resultSet -> {
+            while(true){
+                try {
+                    if (!resultSet.next()) break;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    saleList.add(resultSet.getInt(Const.SALE_SALE_ID));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        dbHandler.getArticlesAsync().thenAccept( resultSet -> {
+            while(true){
+                try {
+                    if (!resultSet.next()) break;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    articleList.add(resultSet.getInt(Const.ARTICLE));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        dbHandler.getDepartmentCodesAsync().thenAccept(resultSet -> {
+            while(true){
+                try {
+                    if (!resultSet.next()) break;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    departmentCodeList.add(resultSet.getInt(Const.DEPARTMENT_CODE));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        dbHandler.getUnitsAsync().thenAccept(resultSet -> {
+            while(true){
+                try {
+                    if (!resultSet.next()) break;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    unitList.add(resultSet.getInt(Const.UNIT_ID));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        dbHandler.getManagersAsync().thenAccept( resultSet -> {
+            while(true){
+                try {
+                    if (!resultSet.next()) break;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    managerList.add(resultSet.getInt(Const.MANAGER_ID));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        dbHandler.getUsersAsync().thenAccept(resultSet -> {
+            while(true){
+                try {
+                    if (!resultSet.next()) break;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    usersList.add(resultSet.getString(Const.USER_LOGIN));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
-        while(managerListResponse.next()){
-            managerList.add(managerListResponse.getInt(Const.MANAGER_ID));
-        }
-        while(usersListResponse.next()){
-            usersList.add(usersListResponse.getString(Const.USER_LOGIN));
-        }
         setSales();
         setProducts();
         setUnits();
@@ -354,9 +420,9 @@ public class AdminMainScreenController {
                 );
             }
             try {
-                dbHandler.updateSale(sale);
+//                dbHandler.updateSale(sale);
+                dbHandler.updateSaleAsync(sale);
                 updateSaleTable(dataStorage);
-                ;
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             } catch (ClassNotFoundException e) {
@@ -437,7 +503,8 @@ public class AdminMainScreenController {
                 id = Integer.parseInt(saleIDTF.getText());
             }
             try {
-                dbHandler.deleteSale(id);
+//                dbHandler.deleteSale(id);
+                dbHandler.deleteSaleAsync(id);
                 updateSaleTable(dataStorage);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -939,13 +1006,24 @@ public class AdminMainScreenController {
     }
 
     private void setUsers() throws SQLException, ClassNotFoundException {
-        ResultSet response = dbHandler.getUsers();
-        while (response.next()) {
-            users.add(new User(
-                    response.getString(Const.USER_LOGIN),
-                    response.getString(Const.USER_PASSWORD)
-            ));
-        }
+//        ResultSet response = dbHandler.getUsers();
+        dbHandler.getUsersAsync().thenAccept(resultSet -> {
+            while (true) {
+                try {
+                    if (!resultSet.next()) break;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    users.add(new User(
+                            resultSet.getString(Const.USER_LOGIN),
+                            resultSet.getString(Const.USER_PASSWORD)
+                    ));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
         userTable.setItems(users);
         userLoginColumn.setCellValueFactory(new PropertyValueFactory<User, String>(Const.USER_LOGIN));
         userPasswordColumn.setCellValueFactory(new PropertyValueFactory<User, String>(Const.USER_PASSWORD));
@@ -953,17 +1031,28 @@ public class AdminMainScreenController {
 
     private void setSales() throws SQLException, ClassNotFoundException {
         ResultSet response = dbHandler.getSales();
-        while (response.next()) {
-            sales.add(new Sale(
-                    response.getInt(Const.SALE_SALE_ID),
-                    response.getInt(Const.ARTICLE),
-                    response.getDate(Const.SALE_DATE),
-                    response.getInt(Const.SALE_AMOUNT),
-                    response.getInt(Const.DEPARTMENT_CODE),
-                    response.getInt(Const.SALE_SUM)
+        dbHandler.getSalesAsync().thenAccept(resultSet -> {
+            while (true) {
+                try {
+                    if (!resultSet.next()) break;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    sales.add(new Sale(
+                            resultSet.getInt(Const.SALE_SALE_ID),
+                            resultSet.getInt(Const.ARTICLE),
+                            resultSet.getDate(Const.SALE_DATE),
+                            resultSet.getInt(Const.SALE_AMOUNT),
+                            resultSet.getInt(Const.DEPARTMENT_CODE),
+                            resultSet.getInt(Const.SALE_SUM)
 
-            ));
-        }
+                    ));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
         saleTable.setItems(sales);
         saleSaleIDColumn.setCellValueFactory(new PropertyValueFactory<Sale, Integer>(Const.SALE_SALE_ID));
         saleArticleColumn.setCellValueFactory(new PropertyValueFactory<Sale, Integer>(Const.ARTICLE));
@@ -974,15 +1063,27 @@ public class AdminMainScreenController {
     }
 
     private void setProducts() throws SQLException, ClassNotFoundException {
-        ResultSet response = dbHandler.getProducts();
-        while (response.next()) {
-            products.add(new Product(
-                    response.getInt(Const.ARTICLE),
-                    response.getString(Const.NAME),
-                    response.getInt(Const.UNIT_ID),
-                    response.getInt(Const.PRODUCT_PRICE)
-            ));
-        }
+//        ResultSet response = dbHandler.getProducts();
+        dbHandler.getProductsAsync().thenAccept(resultSet -> {
+            while (true) {
+                try {
+                    if (!resultSet.next()) break;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    products.add(new Product(
+                            resultSet.getInt(Const.ARTICLE),
+                            resultSet.getString(Const.NAME),
+                            resultSet.getInt(Const.UNIT_ID),
+                            resultSet.getInt(Const.PRODUCT_PRICE)
+                    ));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
         productTable.setItems(products);
         productArticleColumn.setCellValueFactory(new PropertyValueFactory<Product, Integer>(Const.ARTICLE));
         productNameColumn.setCellValueFactory(new PropertyValueFactory<Product, String>(Const.NAME));
@@ -993,26 +1094,50 @@ public class AdminMainScreenController {
 
     private void setUnits() throws SQLException, ClassNotFoundException {
         ResultSet response = dbHandler.getUnits();
-        while (response.next()) {
-            units.add(new Unit(
-                    response.getInt(Const.UNIT_ID),
-                    response.getString(Const.UNIT_VALUE)
-            ));
-        }
+        dbHandler.getUnitsAsync().thenAccept(resultSet -> {
+            while (true) {
+                try {
+                    if (!resultSet.next()) break;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    units.add(new Unit(
+                            resultSet.getInt(Const.UNIT_ID),
+                            resultSet.getString(Const.UNIT_VALUE)
+                    ));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
         unitTable.setItems(units);
         unitUnitIDColumn.setCellValueFactory(new PropertyValueFactory<Unit, Integer>(Const.UNIT_ID));
         unitValueColumn.setCellValueFactory(new PropertyValueFactory<Unit, String>(Const.UNIT_VALUE));
     }
 
     private void setManagers() throws SQLException, ClassNotFoundException {
-        ResultSet response = dbHandler.getManagers();
-        while (response.next()) {
-            managers.add(new Manager(
-                    response.getInt(Const.MANAGER_ID),
-                    response.getString(Const.MANAGER_FULL_NAME),
-                    response.getString(Const.MANAGER_PHONE)
-            ));
-        }
+//        ResultSet response = dbHandler.getManagers();
+        dbHandler.getManagersAsync().thenAccept(resultSet -> {
+            while (true) {
+                try {
+                    if (!resultSet.next()) break;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    managers.add(new Manager(
+                            resultSet.getInt(Const.MANAGER_ID),
+                            resultSet.getString(Const.MANAGER_FULL_NAME),
+                            resultSet.getString(Const.MANAGER_PHONE)
+                    ));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
         managerTable.setItems(managers);
         managerManagerColumn.setCellValueFactory(new PropertyValueFactory<Manager, String>(Const.MANAGER_FULL_NAME));
         managerManagerIdColumn.setCellValueFactory(new PropertyValueFactory<Manager, Integer>(Const.MANAGER_ID));
@@ -1020,14 +1145,26 @@ public class AdminMainScreenController {
     }
 
     private void setDepartments() throws SQLException, ClassNotFoundException {
-        ResultSet response = dbHandler.getDepartments();
-        while (response.next()) {
-            departments.add(new Department(
-                    response.getInt(Const.DEPARTMENT_CODE),
-                    response.getString(Const.NAME),
-                    response.getInt(Const.MANAGER_ID)
-            ));
-        }
+//        ResultSet response = dbHandler.getDepartments();
+        dbHandler.getDepartmentsAsync().thenAccept(resultSet -> {
+            while (true) {
+                try {
+                    if (!resultSet.next()) break;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    departments.add(new Department(
+                            resultSet.getInt(Const.DEPARTMENT_CODE),
+                            resultSet.getString(Const.NAME),
+                            resultSet.getInt(Const.MANAGER_ID)
+                    ));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
         departmentTable.setItems(departments);
         departmentDepartmentCodeColumn.setCellValueFactory(new PropertyValueFactory<Department, Integer>(Const.DEPARTMENT_CODE));
         departmentNameColumn.setCellValueFactory(new PropertyValueFactory<Department, String>(Const.NAME));

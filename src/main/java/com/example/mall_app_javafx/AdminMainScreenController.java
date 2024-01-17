@@ -1258,7 +1258,7 @@ public class AdminMainScreenController {
     }
 
     public boolean isRussianTextWithDots(String text) {
-        return text.matches("[\u0400-\u04FF.]+");
+        return text.matches("[а-яА-Я\\s]+");
     }
 
     public boolean isValidPhone(String str) {

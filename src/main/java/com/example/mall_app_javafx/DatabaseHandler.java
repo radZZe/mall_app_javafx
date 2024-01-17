@@ -4,6 +4,9 @@ import com.example.mall_app_javafx.models.*;
 
 import java.sql.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class DatabaseHandler extends Configs {
@@ -187,14 +190,22 @@ public class DatabaseHandler extends Configs {
         });
     }
     public void addSale(Sale sale) throws SQLException, ClassNotFoundException {
-        String insert = "INSERT INTO " + Const.SALE_TABLE + " (article, date, amount,departmentCode)" +
-                "VALUES (?, ?, ?, ? );";
-        PreparedStatement prSt = getDbConnection().prepareStatement(insert);
-        prSt.setInt(1, sale.getArticle());
-        prSt.setObject(2, sale.getDate());
-        prSt.setInt(3, sale.getAmount());
-        prSt.setInt(4, sale.getDepartmentCode());
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String insert = "INSERT INTO " + Const.SALE_TABLE + " (article, date, amount,departmentCode)" +
+                        "VALUES (?, ?, ?, ? );";
+                PreparedStatement prSt = getDbConnection().prepareStatement(insert);
+                prSt.setInt(1, sale.getArticle());
+                prSt.setObject(2, sale.getDate());
+                prSt.setInt(3, sale.getAmount());
+                prSt.setInt(4, sale.getDepartmentCode());
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
     }
     public void deleteSaleAsync(Integer id) {
         CompletableFuture.runAsync(() -> {
@@ -208,68 +219,123 @@ public class DatabaseHandler extends Configs {
         });
     }
     public void deleteSale(Integer id) throws SQLException, ClassNotFoundException {
-        String delete = "DELETE FROM " + Const.SALE_TABLE + " WHERE " + Const.SALE_SALE_ID + " =?;";
-        PreparedStatement prSt = getDbConnection().prepareStatement(delete);
-        prSt.setInt(1, id);
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String delete = "DELETE FROM " + Const.SALE_TABLE + " WHERE " + Const.SALE_SALE_ID + " =?;";
+                PreparedStatement prSt = getDbConnection().prepareStatement(delete);
+                prSt.setInt(1, id);
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public void updateProduct(Product product) throws SQLException, ClassNotFoundException {
-        String update = "UPDATE " + Const.PRODUCT_TABLE + " SET "
-                + Const.NAME + " = COALESCE(?, " + Const.NAME + "), "
-                + Const.UNIT_ID + " = COALESCE(?, " + Const.UNIT_ID + "), "
-                + Const.PRODUCT_PRICE + " = COALESCE(?, " + Const.PRODUCT_PRICE + ") "
-                + "WHERE " + Const.ARTICLE + " = ?;";
-        PreparedStatement prSt = getDbConnection().prepareStatement(update);
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String update = "UPDATE " + Const.PRODUCT_TABLE + " SET "
+                        + Const.NAME + " = COALESCE(?, " + Const.NAME + "), "
+                        + Const.UNIT_ID + " = COALESCE(?, " + Const.UNIT_ID + "), "
+                        + Const.PRODUCT_PRICE + " = COALESCE(?, " + Const.PRODUCT_PRICE + ") "
+                        + "WHERE " + Const.ARTICLE + " = ?;";
+                PreparedStatement prSt = getDbConnection().prepareStatement(update);
 
-        prSt.setObject(1, product.getName() != null ? product.getName() : null);
-        prSt.setObject(2, product.getUnitID() != null ? product.getUnitID() : null);
-        prSt.setObject(3, product.getPrice() != null ? product.getPrice() : null);
-        prSt.setObject(4, product.getArticle());
-        prSt.executeUpdate();
+                prSt.setObject(1, product.getName() != null ? product.getName() : null);
+                prSt.setObject(2, product.getUnitID() != null ? product.getUnitID() : null);
+                prSt.setObject(3, product.getPrice() != null ? product.getPrice() : null);
+                prSt.setObject(4, product.getArticle());
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public void addProduct(Product product) throws SQLException, ClassNotFoundException {
-        String insert = "INSERT INTO " + Const.PRODUCT_TABLE + " (name, unitID,price)" +
-                "VALUES (?, ?, ?);";
-        PreparedStatement prSt = getDbConnection().prepareStatement(insert);
-        prSt.setString(1, product.getName());
-        prSt.setInt(2, product.getUnitID());
-        prSt.setInt(3, product.getPrice());
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String insert = "INSERT INTO " + Const.PRODUCT_TABLE + " (name, unitID,price)" +
+                        "VALUES (?, ?, ?);";
+                PreparedStatement prSt = getDbConnection().prepareStatement(insert);
+                prSt.setString(1, product.getName());
+                prSt.setInt(2, product.getUnitID());
+                prSt.setInt(3, product.getPrice());
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public void deleteProduct(Integer article) throws SQLException, ClassNotFoundException {
-        String delete = "DELETE FROM " + Const.PRODUCT_TABLE + " WHERE " + Const.ARTICLE + " =?;";
-        PreparedStatement prSt = getDbConnection().prepareStatement(delete);
-        prSt.setInt(1, article);
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String delete = "DELETE FROM " + Const.PRODUCT_TABLE + " WHERE " + Const.ARTICLE + " =?;";
+                PreparedStatement prSt = getDbConnection().prepareStatement(delete);
+                prSt.setInt(1, article);
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public void updateUnit(Unit unit) throws SQLException, ClassNotFoundException {
-        String update = "UPDATE " + Const.UNIT_TABLE + " SET "
-                + Const.UNIT_VALUE + " = COALESCE(?, " + Const.UNIT_VALUE + ")"
-                + "WHERE " + Const.UNIT_ID + " = ?;";
-        PreparedStatement prSt = getDbConnection().prepareStatement(update);
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String update = "UPDATE " + Const.UNIT_TABLE + " SET "
+                        + Const.UNIT_VALUE + " = COALESCE(?, " + Const.UNIT_VALUE + ")"
+                        + "WHERE " + Const.UNIT_ID + " = ?;";
+                PreparedStatement prSt = getDbConnection().prepareStatement(update);
 
-        prSt.setObject(1, unit.getValue() != null ? unit.getValue() : null);
-        prSt.setObject(2, unit.getUnitID() != null ? unit.getUnitID() : null);
-        prSt.executeUpdate();
+                prSt.setObject(1, unit.getValue() != null ? unit.getValue() : null);
+                prSt.setObject(2, unit.getUnitID() != null ? unit.getUnitID() : null);
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public void addUnit(Unit unit) throws SQLException, ClassNotFoundException {
-        String insert = "INSERT INTO " + Const.UNIT_TABLE + " (value)" +
-                "VALUES (?);";
-        PreparedStatement prSt = getDbConnection().prepareStatement(insert);
-        prSt.setString(1, unit.getValue());
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String insert = "INSERT INTO " + Const.UNIT_TABLE + " (value)" +
+                        "VALUES (?);";
+                PreparedStatement prSt = getDbConnection().prepareStatement(insert);
+                prSt.setString(1, unit.getValue());
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public void deleteUnit(Integer unitID) throws SQLException, ClassNotFoundException {
-        String delete = "DELETE FROM " + Const.UNIT_TABLE + " WHERE " + Const.UNIT_ID + " =?;";
-        PreparedStatement prSt = getDbConnection().prepareStatement(delete);
-        prSt.setInt(1, unitID);
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String delete = "DELETE FROM " + Const.UNIT_TABLE + " WHERE " + Const.UNIT_ID + " =?;";
+                PreparedStatement prSt = getDbConnection().prepareStatement(delete);
+                prSt.setInt(1, unitID);
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public CompletableFuture<ResultSet> getManagersAsync() {
@@ -292,85 +358,155 @@ public class DatabaseHandler extends Configs {
     }
 
     public void updateManager(Manager manager) throws SQLException, ClassNotFoundException {
-        String update = "UPDATE " + Const.MANAGER_TABLE + " SET "
-                + Const.MANAGER_FULL_NAME + " = COALESCE(?, " + Const.MANAGER_FULL_NAME + "),"
-                + Const.MANAGER_PHONE + " = COALESCE(?, " + Const.MANAGER_PHONE + ")"
-                + "WHERE " + Const.MANAGER_ID + " = ?;";
-        PreparedStatement prSt = getDbConnection().prepareStatement(update);
-        prSt.setObject(1, manager.getManager() != null ? manager.getManager() : null);
-        prSt.setObject(2, manager.getPhone() != null ? manager.getPhone() : null);
-        prSt.setObject(3, manager.getManagerID());
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String update = "UPDATE " + Const.MANAGER_TABLE + " SET "
+                        + Const.MANAGER_FULL_NAME + " = COALESCE(?, " + Const.MANAGER_FULL_NAME + "),"
+                        + Const.MANAGER_PHONE + " = COALESCE(?, " + Const.MANAGER_PHONE + ")"
+                        + "WHERE " + Const.MANAGER_ID + " = ?;";
+                PreparedStatement prSt = getDbConnection().prepareStatement(update);
+                prSt.setObject(1, manager.getManager() != null ? manager.getManager() : null);
+                prSt.setObject(2, manager.getPhone() != null ? manager.getPhone() : null);
+                prSt.setObject(3, manager.getManagerID());
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public void addManager(Manager manager) throws SQLException, ClassNotFoundException {
-        String insert = "INSERT INTO " + Const.MANAGER_TABLE + " (manager, phone)" +
-                "VALUES (?,?);";
-        PreparedStatement prSt = getDbConnection().prepareStatement(insert);
-        prSt.setString(1, manager.getManager());
-        prSt.setString(2, manager.getPhone());
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String insert = "INSERT INTO " + Const.MANAGER_TABLE + " (manager, phone)" +
+                        "VALUES (?,?);";
+                PreparedStatement prSt = getDbConnection().prepareStatement(insert);
+                prSt.setString(1, manager.getManager());
+                prSt.setString(2, manager.getPhone());
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public void deleteManager(Integer managerID) throws SQLException, ClassNotFoundException {
-        String delete = "DELETE FROM " + Const.MANAGER_TABLE + " WHERE " + Const.MANAGER_ID + " =?;";
-        PreparedStatement prSt = getDbConnection().prepareStatement(delete);
-        prSt.setInt(1, managerID);
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String delete = "DELETE FROM " + Const.MANAGER_TABLE + " WHERE " + Const.MANAGER_ID + " =?;";
+                PreparedStatement prSt = getDbConnection().prepareStatement(delete);
+                prSt.setInt(1, managerID);
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public void updateDepartment(Department department) throws SQLException, ClassNotFoundException {
-        String update = "UPDATE " + Const.DEPARTMENT_TABLE + " SET "
-                + Const.NAME + " = COALESCE(?, " + Const.NAME + "),"
-                + Const.MANAGER_ID + " = COALESCE(?, " + Const.MANAGER_ID + ")"
-                + "WHERE " + Const.DEPARTMENT_CODE + " = ?;";
-        PreparedStatement prSt = getDbConnection().prepareStatement(update);
-        prSt.setObject(1, department.getName() != null ? department.getName() : null);
-        prSt.setObject(2, department.getManagerID() != null ? department.getManagerID() : null);
-        prSt.setObject(3, department.getDepartmentCode());
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String update = "UPDATE " + Const.DEPARTMENT_TABLE + " SET "
+                        + Const.NAME + " = COALESCE(?, " + Const.NAME + "),"
+                        + Const.MANAGER_ID + " = COALESCE(?, " + Const.MANAGER_ID + ")"
+                        + "WHERE " + Const.DEPARTMENT_CODE + " = ?;";
+                PreparedStatement prSt = getDbConnection().prepareStatement(update);
+                prSt.setObject(1, department.getName() != null ? department.getName() : null);
+                prSt.setObject(2, department.getManagerID() != null ? department.getManagerID() : null);
+                prSt.setObject(3, department.getDepartmentCode());
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public void addDepartment(Department department) throws SQLException, ClassNotFoundException {
-        String insert = "INSERT INTO " + Const.DEPARTMENT_TABLE + " (name, managerID)" +
-                "VALUES (?,?);";
-        PreparedStatement prSt = getDbConnection().prepareStatement(insert);
-        prSt.setString(1, department.getName());
-        prSt.setInt(2, department.getManagerID());
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String insert = "INSERT INTO " + Const.DEPARTMENT_TABLE + " (name, managerID)" +
+                        "VALUES (?,?);";
+                PreparedStatement prSt = getDbConnection().prepareStatement(insert);
+                prSt.setString(1, department.getName());
+                prSt.setInt(2, department.getManagerID());
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public void deleteDepartment(Integer departmentCode) throws SQLException, ClassNotFoundException {
-        String delete = "DELETE FROM " + Const.DEPARTMENT_TABLE + " WHERE " + Const.DEPARTMENT_CODE + " =?;";
-        PreparedStatement prSt = getDbConnection().prepareStatement(delete);
-        prSt.setInt(1, departmentCode);
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String delete = "DELETE FROM " + Const.DEPARTMENT_TABLE + " WHERE " + Const.DEPARTMENT_CODE + " =?;";
+                PreparedStatement prSt = getDbConnection().prepareStatement(delete);
+                prSt.setInt(1, departmentCode);
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public void updateUser(User user) throws SQLException, ClassNotFoundException {
-        String update = "UPDATE " + Const.USERS_TABLE + " SET "
-                + Const.USERS_PASSWORD + " = COALESCE(?, " + Const.USERS_PASSWORD + ")"
-                + "WHERE " + Const.USER_LOGIN + " = ?;";
-        PreparedStatement prSt = getDbConnection().prepareStatement(update);
-        prSt.setObject(1, user.getPassword() != null ? user.getPassword() : null);
-        prSt.setObject(2, user.getLogin());
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String update = "UPDATE " + Const.USERS_TABLE + " SET "
+                        + Const.USERS_PASSWORD + " = COALESCE(?, " + Const.USERS_PASSWORD + ")"
+                        + "WHERE " + Const.USER_LOGIN + " = ?;";
+                PreparedStatement prSt = getDbConnection().prepareStatement(update);
+                prSt.setObject(1, user.getPassword() != null ? user.getPassword() : null);
+                prSt.setObject(2, user.getLogin());
+                prSt.executeUpdate();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public void addUser(User user) throws SQLException, ClassNotFoundException {
-        String insert = "INSERT INTO " + Const.USERS_TABLE + " (login, password)" +
-                "VALUES (?,?);";
-        PreparedStatement prSt = getDbConnection().prepareStatement(insert);
-        prSt.setString(1, user.getLogin());
-        prSt.setString(2, user.getPassword());
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            try {
+                String insert = "INSERT INTO " + Const.USERS_TABLE + " (login, password)" +
+                        "VALUES (?,?);";
+                PreparedStatement prSt = getDbConnection().prepareStatement(insert);
+                prSt.setString(1, user.getLogin());
+                prSt.setString(2, user.getPassword());
+                prSt.executeUpdate();
+            } catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public void deleteUser(String login) throws SQLException, ClassNotFoundException {
-        String delete = "DELETE FROM " + Const.USERS_TABLE + " WHERE " + Const.USER_LOGIN + " =?;";
-        PreparedStatement prSt = getDbConnection().prepareStatement(delete);
-        prSt.setString(1, login);
-        prSt.executeUpdate();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(() -> {
+            try {
+                String delete = "DELETE FROM " + Const.USERS_TABLE + " WHERE " + Const.USER_LOGIN + " =?;";
+                PreparedStatement prSt = getDbConnection().prepareStatement(delete);
+                prSt.setString(1, login);
+                prSt.executeUpdate();
+            }
+            catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public CompletableFuture<ResultSet> getManagersByDepartmentCodeAsync(int code) {
@@ -458,7 +594,6 @@ public class DatabaseHandler extends Configs {
         resSet = prSt.executeQuery();
         return resSet;
     }
-
     public ResultSet getUnitIdByArticle(Integer article) throws SQLException, ClassNotFoundException {
         ResultSet resSet = null;
         String select = "SELECT unitID " + " FROM product WHERE article =?;";

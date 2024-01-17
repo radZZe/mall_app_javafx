@@ -937,9 +937,6 @@ public class AdminMainScreenController {
             }else if (!isEnglishTextWithDigits(userLoginTF.getText())){
                 showAlert("Error","Не удалось добавить данные","некорректный login");
                 return;
-            }else if(!usersList.contains(userLoginTF.getText())){
-                showAlert("Error","Не удалось добавить данные","такого login не существует");
-                return;
             }else{
                 login = userLoginTF.getText();
             }
@@ -1261,7 +1258,7 @@ public class AdminMainScreenController {
     }
 
     public boolean isRussianTextWithDots(String text) {
-        return text.matches("[\u0400-\u04FF.]+");
+        return text.matches("[а-яА-Я\\s]+");
     }
 
     public boolean isValidPhone(String str) {
